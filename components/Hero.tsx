@@ -104,23 +104,27 @@ const Hero = () => {
         </div>
 
         {/* 4. Portrait Image - Vertical Parallax */}
-        <motion.div 
-          style={{ y: imageY }}
-          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[90%] sm:w-[55%] lg:w-[40%] h-[65%] sm:h-[80%] z-20 pointer-events-none"
-          initial={{ opacity: 0, y: 80 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.5, ease: customEase, delay: 0.2 }}
-        >
-          <div className="relative w-full h-full">
-            <Image
-              src="/wmremove-transformed (1).png"
-              alt="Portrait"
-              fill
-              className="object-contain object-bottom drop-shadow-[0_20px_50px_rgba(234,215,183,0.1)]"
-              priority
-            />
-          </div>
-        </motion.div>
+        {/* 4. Portrait Image - Vertical Parallax */}
+<motion.div 
+  style={{ y: imageY }}
+  // w-[110%]: Increases width beyond the screen to make the person appear larger
+  // h-[75%]: Increases height from 65% to 75% for mobile
+  className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[110%] sm:w-[55%] lg:w-[40%] h-[75%] sm:h-[80%] z-20 pointer-events-none"
+  initial={{ opacity: 0, y: 80 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 1.5, ease: customEase, delay: 0.2 }}
+>
+  <div className="relative w-full h-full">
+    <Image
+      src="/wmremove-transformed (1).png"
+      alt="Portrait"
+      fill
+      // object-bottom: keeps the feet/waist anchored to the bottom of the screen
+      className="object-contain object-bottom drop-shadow-[0_20px_50px_rgba(234,215,183,0.1)]"
+      priority
+    />
+  </div>
+</motion.div>
 
         {/* 5. Bottom Intro - Parallax Lift */}
         <motion.div 
