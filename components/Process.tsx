@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef, MouseEvent } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { motion, useSpring, useMotionValue } from "framer-motion";
 
@@ -12,11 +11,10 @@ const Footer = () => {
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      // Format: HH:MM AM/PM
       setTime(now.toLocaleTimeString("en-US", { 
         hour: "2-digit", 
         minute: "2-digit",
-        hour12: false // Set to true if you prefer AM/PM
+        hour12: false 
       }));
     };
     updateTime();
@@ -36,11 +34,9 @@ const Footer = () => {
     const { left, top, width, height } = ref.current.getBoundingClientRect();
     const centerX = left + width / 2;
     const centerY = top + height / 2;
-    // Calculate distance from center
     const distanceX = e.clientX - centerX;
     const distanceY = e.clientY - centerY;
     
-    // Apply magnetic pull (divide by a factor to dampen the movement)
     x.set(distanceX * 0.3);
     y.set(distanceY * 0.3);
   };
@@ -51,55 +47,62 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-black w-full min-h-screen flex flex-col justify-between px-6 md:px-12 pt-32 pb-12 overflow-hidden relative">
+    <footer className="bg-black w-full min-h-screen flex flex-col justify-between px-6 md:px-12 pt-24 md:pt-32 pb-10 overflow-hidden relative selection:bg-[#EAD7B7] selection:text-black">
       
       {/* 1. Main Call to Action */}
       <div className="flex-1 flex flex-col justify-center relative z-10">
         
-        {/* Profile Image + Text */}
-        <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-4">
-          
-          <h2 className="text-white text-6xl md:text-9xl font-thin tracking-tight leading-none">
+        <div className="flex flex-col items-start gap-1 md:gap-2 mb-4">
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-white text-5xl sm:text-7xl md:text-9xl font-thin tracking-tight leading-[0.9]"
+          >
             Let's work
-          </h2>
+          </motion.h2>
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="text-[#EAD7B7] font-serif italic text-5xl sm:text-7xl md:text-9xl leading-[0.9]"
+          >
+            together
+          </motion.h2>
         </div>
-
-        {/* Second Line */}
-        <h2 className="text-[#EAD7B7] font-serif italic text-6xl md:text-9xl leading-none">
-          together
-        </h2>
         
-        {/* Horizontal Divider Line */}
-        <div className="w-full h-[1px] bg-[#EAD7B7]/20 mt-16 md:mt-24 relative flex items-center">
+        {/* Divider + Right Aligned Button */}
+        <div className="w-full h-[1px] bg-[#EAD7B7]/20 mt-16 md:mt-24 relative flex items-center justify-end">
             
-            {/* The Magnetic "Get in Touch" Button */}
-            <div className="absolute right-0 md:right-24 -top-[75px] md:-top-[90px]">
+            {/* The Magnetic Button - Positioned consistently on the right */}
+            <div className="absolute right-0 md:right-24 -top-[70px] md:-top-[90px]">
               <motion.div
                 ref={ref}
                 onMouseMove={handleMouseMove}
                 onMouseLeave={handleMouseLeave}
                 style={{ x: springX, y: springY }}
-                className="w-[150px] h-[150px] md:w-[180px] md:h-[180px] bg-[#EAD7B7] rounded-full flex items-center justify-center cursor-pointer group relative z-20"
+                className="w-[140px] h-[140px] md:w-[180px] md:h-[180px] bg-[#EAD7B7] rounded-full flex items-center justify-center cursor-pointer group relative z-20"
               >
-                <Link href="mailto:contact@loomabayas.com" className="absolute inset-0 z-20"></Link>
-                <span className="text-black text-sm uppercase tracking-widest font-medium group-hover:scale-110 transition-transform duration-300">
+                <Link href="mailto:shahammoidu616@gmail.com" className="absolute inset-0 z-20"></Link>
+                <span className="text-black text-[11px] md:text-sm uppercase tracking-widest font-medium group-hover:scale-110 transition-transform duration-300">
                   Get in touch
                 </span>
               </motion.div>
             </div>
-
         </div>
 
-        {/* Contact Pills */}
-        <div className="flex flex-col md:flex-row gap-4 mt-12 md:mt-16">
+        {/* Contact Info - Pushed further down on mobile to prevent overlapping with the circle */}
+        <div className="flex flex-col md:flex-row gap-3 mt-28 md:mt-16">
           <Link 
-            href="mailto:hello@arik.com" 
-            className="border border-[#EAD7B7]/20 rounded-full px-8 py-4 text-white hover:bg-[#EAD7B7] hover:text-black transition-all duration-300 text-sm uppercase tracking-widest"
-          >shahammoidu616@gmail.com
+            href="mailto:shahammoidu616@gmail.com" 
+            className="border border-[#EAD7B7]/20 rounded-full px-6 py-4 text-white hover:bg-[#EAD7B7] hover:text-black transition-all duration-300 text-[10px] md:text-sm uppercase tracking-widest text-center"
+          >
+            shahammoidu616@gmail.com
           </Link>
           <Link 
-            href="tel:+91 7012381292" 
-            className="border border-[#EAD7B7]/20 rounded-full px-8 py-4 text-white hover:bg-[#EAD7B7] hover:text-black transition-all duration-300 text-sm uppercase tracking-widest"
+            href="tel:+917012381292" 
+            className="border border-[#EAD7B7]/20 rounded-full px-6 py-4 text-white hover:bg-[#EAD7B7] hover:text-black transition-all duration-300 text-[10px] md:text-sm uppercase tracking-widest text-center"
           >
             +91 7012381292
           </Link>
@@ -108,23 +111,23 @@ const Footer = () => {
       </div>
 
       {/* 2. Bottom Meta Bar */}
-      <div className="flex flex-col md:flex-row items-end md:items-center justify-between mt-24 text-[#EAD7B7]/40 text-[10px] uppercase tracking-widest font-mono border-t border-[#EAD7B7]/10 pt-8">
+      <div className="flex flex-row items-center justify-between mt-20 text-[#EAD7B7]/40 text-[8px] md:text-[10px] uppercase tracking-[0.2em] font-mono border-t border-[#EAD7B7]/10 pt-8">
         
-        {/* Left: Version & Copyright */}
-        <div className="flex flex-col gap-2 mb-8 md:mb-0">
+        <div className="flex flex-col gap-1">
           <span>Version</span>
-          <span className="text-white">2026 © Edition</span>
+          <span className="text-white">2026 Edition</span>
         </div>
 
-        {/* Center: Live Time */}
-        
+        <div className="hidden md:flex flex-col gap-1 text-center">
+          <span>Local Time</span>
+          <span className="text-white">{time} IN</span>
+        </div>
 
-        {/* Right: Socials */}
-        <div className="flex flex-col gap-2 text-right">
+        <div className="flex flex-col gap-1 text-right">
           <span>Socials</span>
-          <div className="flex gap-6 text-white">
-            
+          <div className="flex gap-4 md:gap-6 text-white">
             <Link href="#" className="hover:text-[#EAD7B7] transition-colors">LinkedIn</Link>
+            <Link href="#" className="hover:text-[#EAD7B7] transition-colors">Github</Link>
           </div>
         </div>
 

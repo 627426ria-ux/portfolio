@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, MouseEvent, useState } from "react";
+import { useRef, MouseEvent, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
@@ -42,50 +42,58 @@ const projects = [
 // --- Individual Project Card ---
 const ProjectCard = ({ project, index }: { project: any, index: number }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [isMobileView, setIsMobileView] = useState(false);
   
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   
-  // Ultra-tight spring to prevent ghosting
   const springConfig = { stiffness: 800, damping: 35, mass: 0.1 };
   const springX = useSpring(mouseX, springConfig);
   const springY = useSpring(mouseY, springConfig);
 
+  // Detect screen size to toggle API viewport settings
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobileView(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   function handleMouseMove(e: MouseEvent<HTMLDivElement>) {
     const rect = e.currentTarget.getBoundingClientRect();
-    // Centering the 80x80 cursor (subtracting half of 80)
     mouseX.set(e.clientX - rect.left - 40); 
     mouseY.set(e.clientY - rect.top - 40);
   }
 
-  // Generate a dynamic screenshot URL using Microlink's free API
-  const dynamicScreenshotUrl = `https://api.microlink.io/?url=${encodeURIComponent(project.link)}&screenshot=true&meta=false&embed=screenshot.url`;
+  // API updated to request mobile viewport when on smaller screens
+  const dynamicScreenshotUrl = `https://api.microlink.io/?url=${encodeURIComponent(project.link)}&screenshot=true&meta=false&embed=screenshot.url${isMobileView ? '&viewport.isMobile=true&viewport.width=375&viewport.height=667' : ''}`;
 
   return (
     <div 
-      // md:cursor-none ensures the default cursor hides ONLY on desktop. 
-      // Mobile keeps default touch behavior.
-      className="group relative h-[400px] w-[280px] sm:h-[450px] sm:w-[320px] md:h-[65vh] md:w-[45vw] flex-shrink-0 md:cursor-none"
+      className="group relative h-[380px] w-[300px] sm:h-[450px] sm:w-[320px] md:h-[65vh] md:w-[45vw] flex-shrink-0 md:cursor-none"
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <Link href={project.link} target="_blank" className="flex flex-col justify-end w-full h-full relative z-10">
         
-        {/* Dynamic Website Preview Frame */}
-        <div className="relative w-full h-[75%] md:h-[80%] overflow-hidden rounded-md bg-[#111] pointer-events-none border border-white/5">
+        {/* Rectangular Frame */}
+        <div className="relative w-full h-[70%] sm:h-[75%] md:h-[80%] overflow-hidden rounded-xl md:rounded-2xl bg-[#111] pointer-events-none border border-white/10 shadow-2xl">
           <Image
             fill
             alt={`Preview of ${project.title}`}
             src={dynamicScreenshotUrl}
             unoptimized 
+            // We use object-top so the mobile header is always visible
             className="object-cover object-top transition-all duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)] scale-100 group-hover:scale-105 opacity-90 group-hover:opacity-100"
           />
         </div>
 
         {/* Project Info */}
         <div className="mt-6 md:mt-8 flex flex-col items-start px-2 pointer-events-none">
-          <span className="text-[#EAD7B7] text-[9px] md:text-[10px] lg:text-xs uppercase tracking-widest font-light opacity-60 mb-2 md:mb-3 group-hover:opacity-100 transition-opacity duration-300">
+          <span className="text-[#EAD7B7] text-[9px] md:text-[10px] lg:text-xs uppercase tracking-[0.2em] font-light opacity-60 mb-2 md:mb-3 group-hover:opacity-100 transition-opacity duration-300">
             0{index + 1} — {project.category}
           </span>
           <h2 className="text-white text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-thin tracking-wide leading-none group-hover:text-[#EAD7B7] transition-colors duration-300">
@@ -94,7 +102,7 @@ const ProjectCard = ({ project, index }: { project: any, index: number }) => {
         </div>
       </Link>
 
-      {/* Floating Cursor (Hidden on mobile via 'hidden md:flex') */}
+      {/* Floating Cursor (Desktop Only) */}
       <motion.div 
         style={{ x: springX, y: springY }}
         animate={{ 
@@ -121,8 +129,7 @@ const FeaturedWork = () => {
     target: targetRef,
   });
 
-  // Pushed the end transform to -80% so the last items are fully visible on screen
-  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-80%"]);
+  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-85%"]);
 
   return (
     <section ref={targetRef} className="relative h-[400vh] bg-black selection:bg-[#EAD7B7] selection:text-black">
@@ -130,11 +137,9 @@ const FeaturedWork = () => {
         
         <motion.div style={{ x }} className="flex gap-12 sm:gap-16 md:gap-32 px-6 sm:px-12 md:px-16 items-center">
           
-          {/* Intro Text Block */}
-          <div className="flex-shrink-0 w-[280px] sm:w-[300px] md:w-[35vw] flex flex-col justify-center h-[60vh] pl-2 sm:pl-6 md:pl-12">
+          <div className="flex-shrink-0 w-[280px] sm:w-[350px] md:w-[35vw] flex flex-col justify-center h-[60vh] pl-2 sm:pl-6 md:pl-12">
             <h2 className="text-[#EAD7B7] text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-thin tracking-wide leading-tight">
               Featured <br/> 
-              {/* Updated to match the typography system */}
               <span className="font-serif italic text-5xl sm:text-6xl md:text-8xl lg:text-[7rem] text-white font-medium lowercase tracking-tight">
                 works
               </span>
@@ -150,13 +155,11 @@ const FeaturedWork = () => {
             </div>
           </div>
 
-          {/* Render Projects */}
           {projects.map((project, index) => (
             <ProjectCard key={project.id} project={project} index={index} />
           ))}
 
-          {/* End padding block so the last card doesn't hit the absolute edge of the screen */}
-          <div className="flex-shrink-0 w-[5vw] md:w-[10vw]"></div>
+          <div className="flex-shrink-0 w-[10vw] md:w-[20vw]"></div>
 
         </motion.div>
 

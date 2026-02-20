@@ -1,27 +1,42 @@
 "use client";
 
+import { useRef } from 'react';
 import Image from 'next/image';
-import { motion, Variants } from 'framer-motion';
+import { motion, Variants, useScroll, useTransform, useSpring } from 'framer-motion';
 
 const Hero = () => {
-  // High-end custom easing curve
+  const containerRef = useRef<HTMLElement>(null);
+  
+  // 1. Setup Scroll Progress
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"]
+  });
+
+  // 2. Define Smooth Parallax Transforms
+  // Background text moves left
+  const textX = useTransform(scrollYProgress, [0, 1], ["0%", "-20%"]);
+  // Image lifts up slightly
+  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "-10%"]);
+  // Top/Bottom content fades and scales out
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const contentScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.9]);
+
+  // Smooth out the movement with a spring
+  const smoothTextX = useSpring(textX, { stiffness: 100, damping: 30, restDelta: 0.001 });
+
   const customEase: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
-  // Container variant to stagger the load of child elements
   const staggerContainer: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.2,
-      },
+      transition: { staggerChildren: 0.15, delayChildren: 0.2 },
     },
   };
 
-  // Upgraded fade-up with a subtle blur effect
   const fadeUpBlur: Variants = {
-    hidden: { opacity: 0, y: 40, filter: 'blur(10px)' },
+    hidden: { opacity: 0, y: 30, filter: 'blur(10px)' },
     visible: { 
       opacity: 1, 
       y: 0, 
@@ -31,97 +46,108 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative h-[100dvh] w-full bg-black overflow-hidden font-sans selection:bg-[#EAD7B7] selection:text-black">
-      
-      {/* 1. Top Navigation / Services Pill */}
-      <motion.div 
-        className="absolute top-4 sm:top-6 md:top-8 left-1/2 -translate-x-1/2 z-30 w-[95%] max-w-6xl"
-        initial={{ opacity: 0, y: -20, filter: 'blur(5px)' }}
-        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-        transition={{ duration: 1, ease: customEase, delay: 0.1 }}
-      >
-        <div className="border border-[#EAD7B7]/30 rounded-full px-3 py-2 sm:px-5 sm:py-2.5 md:px-8 md:py-3 flex justify-center flex-wrap gap-x-2 gap-y-1 sm:gap-4 md:gap-6 text-[#EAD7B7] text-[7px] sm:text-[9px] md:text-xs tracking-widest uppercase bg-black/40 backdrop-blur-md opacity-80 font-light">
-          <span>Next.js</span>
-          <span className="text-[#EAD7B7]/40">•</span>
-          <span>Shopify</span>
-          <span className="text-[#EAD7B7]/40">•</span>
-          <span>WordPress</span>
-          <span className="text-[#EAD7B7]/40 hidden sm:inline">•</span>
-          <span className="hidden sm:inline">Web Design</span>
-        </div>
-      </motion.div>
-
-      {/* 2. Top Left & Right Text Overlay */}
-      <motion.div 
-        className="absolute top-[18%] sm:top-[20%] w-full px-5 sm:px-8 md:px-16 flex justify-between items-start z-30 pointer-events-none"
-        variants={staggerContainer}
-        initial="hidden"
-        animate="visible"
-      >
-        <motion.div variants={fadeUpBlur}>
-          <h2 className="text-[#EAD7B7] text-xl sm:text-2xl md:text-3xl font-thin tracking-wide uppercase">SHAHAM</h2>
-          <p className="text-[#EAD7B7] text-[10px] sm:text-xs md:text-sm font-light mt-1 md:mt-2 tracking-widest uppercase opacity-60">Web Developer</p>
-        </motion.div>
-
-        <motion.div variants={fadeUpBlur} className="text-right hidden md:block">
-          <p className="text-[#EAD7B7] text-xs md:text-sm font-light tracking-widest uppercase opacity-60 leading-relaxed">
-            Code that scales.<br />Experiences that convert.
-          </p>
-        </motion.div>
-      </motion.div>
-
-      {/* 3. Background Huge Text (Z-Index 10: Behind Subject) */}
-      <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none overflow-hidden w-full">
-        <motion.h1 
-          className="text-[#EAD7B7]/15 font-black tracking-tighter w-full text-center leading-none select-none uppercase whitespace-nowrap"
-          // Pure 15.5vw forces the 9-letter word to stretch edge-to-edge flawlessly on all screens
-          style={{ fontSize: '15.5vw' }}
-          initial={{ opacity: 0, scale: 0.95, filter: 'blur(15px)' }}
-          animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-          transition={{ duration: 1.8, ease: customEase }}
-        >
-          DEVELOPER
-        </motion.h1>
-      </div>
-
-      {/* 4. Portrait Image Container (Z-Index 20) */}
-      <motion.div 
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[95%] sm:w-[75%] md:w-[60%] lg:w-[45%] xl:w-[35%] h-[55%] sm:h-[65%] md:h-[75%] 2xl:h-[80%] z-20 pointer-events-none"
-        initial={{ opacity: 0, y: 100 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1.5, ease: customEase, delay: 0.2 }}
-      >
-        <div className="relative w-full h-full">
-          <Image
-            src="/wmremove-transformed (1).png"
-            alt="Portrait of Web Developer"
-            fill
-            className="object-contain object-bottom drop-shadow-2xl"
-            priority
-          />
-        </div>
-      </motion.div>
-
-      {/* 5. Bottom Content Container (Z-Index 30) */}
-      <motion.div 
-        className="absolute bottom-6 sm:bottom-12 left-0 w-full px-5 sm:px-8 md:px-16 z-30 flex justify-end pointer-events-none"
-        variants={staggerContainer}
-        initial="hidden"
-        animate="visible"
-      >
+    <section 
+      ref={containerRef}
+      className="relative h-[120dvh] w-full bg-black overflow-hidden font-sans selection:bg-[#EAD7B7] selection:text-black"
+    >
+      <div className="sticky top-0 h-[100dvh] w-full overflow-hidden">
+        
+        {/* 1. Top Navigation / Pill */}
         <motion.div 
-          className="max-w-[280px] sm:max-w-xs md:max-w-md text-right flex flex-col items-end pointer-events-auto"
-          variants={fadeUpBlur}
+          style={{ opacity: contentOpacity, scale: contentScale }}
+          className="absolute top-8 sm:top-10 left-1/2 -translate-x-1/2 z-40 w-[95%] max-w-6xl"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, ease: customEase, delay: 0.1 }}
         >
-          <h3 className="text-[#EAD7B7] text-lg sm:text-xl md:text-2xl font-thin tracking-widest uppercase mb-2 md:mb-3 drop-shadow-md">
-            Crafting <span className="font-serif italic text-white font-medium lowercase tracking-normal">digital</span> realities
-          </h3>
-          <p className="text-[#EAD7B7] text-[10px] sm:text-xs md:text-sm font-light tracking-wide opacity-80 md:opacity-60 leading-relaxed drop-shadow-md">
-            I build premium, high-performance websites using Next.js, Shopify, and WordPress. My work bridges the gap between stunning visual aesthetics and highly scalable code.
-          </p>
+          <div className="border border-[#EAD7B7]/20 rounded-full px-4 py-2 sm:px-8 sm:py-3 flex justify-center items-center gap-2 sm:gap-6 text-[#EAD7B7] text-[8px] sm:text-xs tracking-[0.2em] uppercase bg-black/40 backdrop-blur-xl opacity-90 font-light">
+            <span>Next.js</span>
+            <span className="text-[#EAD7B7]/30">•</span>
+            <span>Shopify</span>
+            <span className="text-[#EAD7B7]/30">•</span>
+            <span>WordPress</span>
+          </div>
         </motion.div>
-      </motion.div>
 
+        {/* 2. Top-Mid Text Overlay */}
+        <motion.div 
+          style={{ opacity: contentOpacity, y: imageY }}
+          className="absolute top-[22%] sm:top-[20%] w-full px-6 sm:px-16 flex justify-between items-start z-30 pointer-events-none"
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.div variants={fadeUpBlur}>
+            <h2 className="text-[#EAD7B7] text-lg sm:text-3xl font-thin tracking-[0.15em] uppercase">SHAHAM</h2>
+            <p className="text-[#EAD7B7] text-[9px] sm:text-sm font-light mt-1 tracking-[0.3em] uppercase opacity-50">Web Developer</p>
+          </motion.div>
+
+          <motion.div variants={fadeUpBlur} className="text-right">
+            <p className="text-[#EAD7B7] text-[9px] sm:text-sm font-light tracking-[0.2em] uppercase opacity-50 leading-loose">
+              Code that scales.<br />Digital Experiences.
+            </p>
+          </motion.div>
+        </motion.div>
+
+        {/* 3. Background Text - Horizontal Scroll Movement */}
+        <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none overflow-hidden w-full">
+          <motion.h1 
+            style={{ x: smoothTextX }}
+            className="text-[#EAD7B7]/10 font-black tracking-tighter w-full text-center leading-none select-none uppercase whitespace-nowrap"
+            style={{ fontSize: '18vw', x: smoothTextX }}
+            initial={{ opacity: 0, scale: 0.9, filter: 'blur(20px)' }}
+            animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+            transition={{ duration: 1.8, ease: customEase }}
+          >
+            DEVELOPER DEVELOPER DEVELOPER
+          </motion.h1>
+        </div>
+
+        {/* 4. Portrait Image - Vertical Parallax */}
+        <motion.div 
+          style={{ y: imageY }}
+          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[90%] sm:w-[55%] lg:w-[40%] h-[65%] sm:h-[80%] z-20 pointer-events-none"
+          initial={{ opacity: 0, y: 80 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.5, ease: customEase, delay: 0.2 }}
+        >
+          <div className="relative w-full h-full">
+            <Image
+              src="/wmremove-transformed (1).png"
+              alt="Portrait"
+              fill
+              className="object-contain object-bottom drop-shadow-[0_20px_50px_rgba(234,215,183,0.1)]"
+              priority
+            />
+          </div>
+        </motion.div>
+
+        {/* 5. Bottom Intro - Parallax Lift */}
+        <motion.div 
+          style={{ opacity: contentOpacity, y: imageY }}
+          className="absolute bottom-10 sm:bottom-12 left-0 w-full px-6 sm:px-16 z-30 flex justify-end items-end pointer-events-none"
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.div 
+            className="max-w-[260px] sm:max-w-md text-right flex flex-col items-end pointer-events-auto"
+            variants={fadeUpBlur}
+          >
+            <h3 className="text-[#EAD7B7] text-xl sm:text-3xl font-thin tracking-widest uppercase mb-4 drop-shadow-md">
+              Crafting <br />
+              <span className="font-serif italic text-white font-medium lowercase tracking-normal text-3xl sm:text-5xl block mt-1">
+                digital
+              </span> 
+              realities
+            </h3>
+            <p className="text-[#EAD7B7] text-[10px] sm:text-sm font-light tracking-wide opacity-60 leading-relaxed max-w-[220px] sm:max-w-none">
+              I build premium, high-performance websites using Next.js and Shopify. Bridging the gap between aesthetics and code.
+            </p>
+          </motion.div>
+        </motion.div>
+
+      </div>
     </section>
   );
 };
