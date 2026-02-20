@@ -34,8 +34,8 @@ const Services = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-10%" });
 
-  // Custom easing for that premium feel
-  const customEase = [0.16, 1, 0.3, 1];
+  // THE FIX: Explicitly type this as a 4-number tuple
+  const customEase: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
   // Parent container stagger effect
   const containerVariants: Variants = {
@@ -71,7 +71,6 @@ const Services = () => {
   };
 
   return (
-    // Changed to min-h-[100dvh] and added vertical padding so it never overflows on small phones
     <section className="bg-black w-full min-h-[100dvh] flex flex-col items-center justify-center py-24 px-6 md:px-12 overflow-hidden selection:bg-[#EAD7B7] selection:text-black">
       
       {/* 1. Minimal Header */}
@@ -112,7 +111,6 @@ const Services = () => {
         variants={containerVariants}
         initial="hidden"
         animate={isInView ? "visible" : "hidden"}
-        // border-t and border-l on the container, combined with border-b and border-r on the items, creates the perfect 1px grid
         className="w-full max-w-5xl flex-1 border-t border-l border-[#EAD7B7]/10 grid grid-cols-1 md:grid-cols-2 md:grid-rows-2"
       >
         
