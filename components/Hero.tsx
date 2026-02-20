@@ -90,18 +90,18 @@ const Hero = () => {
         </motion.div>
 
         {/* 3. Background Text - Horizontal Scroll Movement */}
-        <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none overflow-hidden w-full">
-          <motion.h1 
-            style={{ x: smoothTextX }}
-            className="text-[#EAD7B7]/10 font-black tracking-tighter w-full text-center leading-none select-none uppercase whitespace-nowrap"
-            style={{ fontSize: '18vw', x: smoothTextX }}
-            initial={{ opacity: 0, scale: 0.9, filter: 'blur(20px)' }}
-            animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-            transition={{ duration: 1.8, ease: customEase }}
-          >
-            DEVELOPER DEVELOPER DEVELOPER
-          </motion.h1>
-        </div>
+<div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none overflow-hidden w-full">
+  <motion.h1 
+    // Combined both fontSize and x into one style object
+    style={{ fontSize: '18vw', x: smoothTextX }}
+    className="text-[#EAD7B7]/10 font-black tracking-tighter w-full text-center leading-none select-none uppercase whitespace-nowrap"
+    initial={{ opacity: 0, scale: 0.9, filter: 'blur(20px)' }}
+    animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+    transition={{ duration: 1.8, ease: customEase }}
+  >
+    DEVELOPER DEVELOPER DEVELOPER
+  </motion.h1>
+</div>
 
         {/* 4. Portrait Image - Vertical Parallax */}
         {/* 4. Portrait Image - Vertical Parallax */}
