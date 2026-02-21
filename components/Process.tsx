@@ -118,16 +118,12 @@ const Footer = () => {
           <span className="text-white">2026 Edition</span>
         </div>
 
-        <div className="hidden md:flex flex-col gap-1 text-center">
-          <span>Local Time</span>
-          <span className="text-white">{time} IN</span>
-        </div>
+        
 
         <div className="flex flex-col gap-1 text-right">
           <span>Socials</span>
           <div className="flex gap-4 md:gap-6 text-white">
-            <Link href="#" className="hover:text-[#EAD7B7] transition-colors">LinkedIn</Link>
-            <Link href="#" className="hover:text-[#EAD7B7] transition-colors">Github</Link>
+            <Link href="https://www.linkedin.com/in/shaham-moidu-731661253/" className="hover:text-[#EAD7B7] transition-colors">LinkedIn</Link>
           </div>
         </div>
 
