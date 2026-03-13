@@ -23,7 +23,7 @@ const projects = [
     id: 3,
     title: "EmirCo DXB",
     category: "Document Clearance Services",
-    link: "https://aqua-hedgehog-634598.hostingersite.com/",
+    link: "https://www.emircodxb.com/",
   },
   {
     id: 4,
